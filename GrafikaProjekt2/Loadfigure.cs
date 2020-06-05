@@ -63,11 +63,6 @@ namespace GrafikaProjekt2
                     circle.Add(tr);
 
                 }
-
-
-
- 
         }
-
     }
 }

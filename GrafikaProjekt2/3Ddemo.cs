@@ -61,6 +61,8 @@ namespace GrafikaProjekt2
 
         public Vector3 sipmleCamera;
 
+        //
+        float helperDotProd;
 
         //Constructor here, we will pass the pic in the constroctor when we will work with forms
         public _3Ddemo(PictureBox pic) {
@@ -69,29 +71,29 @@ namespace GrafikaProjekt2
 
             //create verticies of cibe
 
-            //cube = new List<Triangle>() {
-            //new Triangle(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.0f, 1.0f, 0.0f), new Vector3(1.0f, 1.0f, 0.0f)),
-            //new Triangle(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 0.0f), new Vector3(1.0f, 0.0f, 0.0f)),
+            cube = new List<Triangle>() {
+            new Triangle(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.0f, 1.0f, 0.0f), new Vector3(1.0f, 1.0f, 0.0f)),
+            new Triangle(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 0.0f), new Vector3(1.0f, 0.0f, 0.0f)),
 
-            //new Triangle(new Vector3(1.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f)),
-            //new Triangle(new Vector3(1.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(1.0f, 0.0f, 1.0f)),
+            new Triangle(new Vector3(1.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f)),
+            new Triangle(new Vector3(1.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(1.0f, 0.0f, 1.0f)),
 
-            //new Triangle(new Vector3(1.0f, 0.0f, 1.0f), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(0.0f, 1.0f, 1.0f)),
-            //new Triangle(new Vector3(1.0f, 0.0f, 1.0f), new Vector3(0.0f, 1.0f, 1.0f), new Vector3(0.0f, 0.0f, 1.0f)),
+            new Triangle(new Vector3(1.0f, 0.0f, 1.0f), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(0.0f, 1.0f, 1.0f)),
+            new Triangle(new Vector3(1.0f, 0.0f, 1.0f), new Vector3(0.0f, 1.0f, 1.0f), new Vector3(0.0f, 0.0f, 1.0f)),
 
-            //new Triangle(new Vector3(0.0f, 0.0f, 1.0f), new Vector3(0.0f, 1.0f, 1.0f), new Vector3(0.0f, 1.0f, 0.0f)),
-            //new Triangle(new Vector3(0.0f, 0.0f, 1.0f), new Vector3(0.0f, 1.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f)),
+            new Triangle(new Vector3(0.0f, 0.0f, 1.0f), new Vector3(0.0f, 1.0f, 1.0f), new Vector3(0.0f, 1.0f, 0.0f)),
+            new Triangle(new Vector3(0.0f, 0.0f, 1.0f), new Vector3(0.0f, 1.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f)),
 
-            //new Triangle(new Vector3(0.0f, 1.0f, 0.0f), new Vector3(0.0f, 1.0f, 1.0f), new Vector3(1.0f, 1.0f, 1.0f)),
-            //new Triangle(new Vector3(0.0f, 1.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(1.0f, 1.0f, 0.0f)),
+            new Triangle(new Vector3(0.0f, 1.0f, 0.0f), new Vector3(0.0f, 1.0f, 1.0f), new Vector3(1.0f, 1.0f, 1.0f)),
+            new Triangle(new Vector3(0.0f, 1.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(1.0f, 1.0f, 0.0f)),
 
-            //new Triangle(new Vector3(1.0f, 0.0f, 1.0f), new Vector3(0.0f, 0.0f, 1.0f), new Vector3(0.0f, 0.0f, 0.0f)),
-            //new Triangle(new Vector3(1.0f, 0.0f, 1.0f), new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 0.0f, 0.0f))
-            // };
+            new Triangle(new Vector3(1.0f, 0.0f, 1.0f), new Vector3(0.0f, 0.0f, 1.0f), new Vector3(0.0f, 0.0f, 0.0f)),
+            new Triangle(new Vector3(1.0f, 0.0f, 1.0f), new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 0.0f, 0.0f))
+             };
 
-            Loadfigure figure = new Loadfigure();
-            figure.readVerticies();
-            cube = figure.circle;
+            //Loadfigure figure = new Loadfigure();
+            //figure.readVerticies();
+            //cube = figure.circle;
 
             float fNear = 0.1f;
             float fFar = 1000.0f;
@@ -136,6 +138,9 @@ namespace GrafikaProjekt2
             matRotZ.M44 = 1;
 
 
+            List<Triangle> listTrianglesToRastr = new List<Triangle>() ;
+             
+
             foreach (Triangle tri in cube)
             {
                 Triangle triProject = new Triangle(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f));
@@ -155,9 +160,9 @@ namespace GrafikaProjekt2
                 triRotatedZX.v3 = MultMatrixVect(triRotatedZ.v3, matRotX);
 
                 triTranslated = triRotatedZX;
-                triTranslated.v1.Z = triRotatedZX.v1.Z + 4.9f;
-                triTranslated.v2.Z = triRotatedZX.v2.Z + 4.9f;
-                triTranslated.v3.Z = triRotatedZX.v3.Z + 4.9f;
+                triTranslated.v1.Z = triRotatedZX.v1.Z + 3.0f;
+                triTranslated.v2.Z = triRotatedZX.v2.Z + 3.0f;
+                triTranslated.v3.Z = triRotatedZX.v3.Z + 3.0f;
 
                 //try to show cube without backside lines
                 Vector3 normal, line1, line2 = new Vector3();
@@ -193,7 +198,7 @@ namespace GrafikaProjekt2
                     
                     float dp = normal.X * light.X + normal.Y * light.Y + normal.Z * light.Z;
 
-
+                    helperDotProd = dp;
 
                     //Multiply vector kazdego trojkonta
                     triProject.v1 = MultMatrixVect(triTranslated.v1, projMatrix);
@@ -214,12 +219,40 @@ namespace GrafikaProjekt2
                     triProject.v3.X *= 0.5f * bp.Width;
                     triProject.v3.Y *= 0.5f * bp.Height;
 
+                    listTrianglesToRastr.Add(triProject);
+
+
+
                     //here we spawn and fill our triangles
-                    fillTriangle(triProject, bp, dp);
-                    DrawTriangle(triProject, bp);
+                    //fillTriangle(triProject, bp, dp);
+                    //DrawTriangle(triProject, bp);
 
                 }
 
+            }
+            //end of foreach loop
+
+            //algorytm malarski, sortujemy według osi Z, buble sort
+
+            for (int i = 0; i < listTrianglesToRastr.Count-2; i++)
+            {
+                for (int j = 1; j < listTrianglesToRastr.Count-1; j++)
+                {
+                    float zValue_i = (listTrianglesToRastr[i].v1.Z + listTrianglesToRastr[i].v2.Z + listTrianglesToRastr[i].v3.Z) / 3.0f;
+                    float zValue_j = (listTrianglesToRastr[j].v1.Z + listTrianglesToRastr[j].v2.Z + listTrianglesToRastr[j].v3.Z) / 3.0f;
+
+                    if (zValue_i < zValue_j)
+                    {
+                        SwapTriangles(listTrianglesToRastr[i], listTrianglesToRastr[j]);
+                    }
+                }
+            }
+
+
+            foreach (var triProject in listTrianglesToRastr)
+            {
+                fillTriangle(triProject, bp, helperDotProd);
+                DrawTriangle(triProject, bp);
             }
 
             pic.Image = bp;
@@ -227,7 +260,18 @@ namespace GrafikaProjekt2
 
         }
 
+        //swap triangles
+        public void SwapTriangles(Triangle t1, Triangle t2)
+        {
 
+            Triangle tmp = new Triangle(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f));
+            t1 = tmp;
+            t1 = t2;
+            t2 = tmp;
+
+        }
+
+       
 
         //fill triangle
         public static void fillTriangle(Triangle tri, Bitmap bitmap, float dotProduct)
