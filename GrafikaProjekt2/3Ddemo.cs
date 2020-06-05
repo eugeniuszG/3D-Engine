@@ -59,32 +59,39 @@ namespace GrafikaProjekt2
         public float ftheta;
         public List<Triangle> cube = new List<Triangle>();
 
+        public Vector3 sipmleCamera;
+
+
         //Constructor here, we will pass the pic in the constroctor when we will work with forms
         public _3Ddemo(PictureBox pic) {
 
             this.pic = pic;
-            
+
             //create verticies of cibe
 
-            cube = new List<Triangle>() {
-            new Triangle(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.0f, 1.0f, 0.0f), new Vector3(1.0f, 1.0f, 0.0f)),
-            new Triangle(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 0.0f), new Vector3(1.0f, 0.0f, 0.0f)),
+            //cube = new List<Triangle>() {
+            //new Triangle(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.0f, 1.0f, 0.0f), new Vector3(1.0f, 1.0f, 0.0f)),
+            //new Triangle(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 0.0f), new Vector3(1.0f, 0.0f, 0.0f)),
 
-            new Triangle(new Vector3(1.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f)),
-            new Triangle(new Vector3(1.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(1.0f, 0.0f, 1.0f)),
+            //new Triangle(new Vector3(1.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f)),
+            //new Triangle(new Vector3(1.0f, 0.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(1.0f, 0.0f, 1.0f)),
 
-            new Triangle(new Vector3(1.0f, 0.0f, 1.0f), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(0.0f, 1.0f, 1.0f)),
-            new Triangle(new Vector3(1.0f, 0.0f, 1.0f), new Vector3(0.0f, 1.0f, 1.0f), new Vector3(0.0f, 0.0f, 1.0f)),
+            //new Triangle(new Vector3(1.0f, 0.0f, 1.0f), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(0.0f, 1.0f, 1.0f)),
+            //new Triangle(new Vector3(1.0f, 0.0f, 1.0f), new Vector3(0.0f, 1.0f, 1.0f), new Vector3(0.0f, 0.0f, 1.0f)),
 
-            new Triangle(new Vector3(0.0f, 0.0f, 1.0f), new Vector3(0.0f, 1.0f, 1.0f), new Vector3(0.0f, 1.0f, 0.0f)),
-            new Triangle(new Vector3(0.0f, 0.0f, 1.0f), new Vector3(0.0f, 1.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f)),
+            //new Triangle(new Vector3(0.0f, 0.0f, 1.0f), new Vector3(0.0f, 1.0f, 1.0f), new Vector3(0.0f, 1.0f, 0.0f)),
+            //new Triangle(new Vector3(0.0f, 0.0f, 1.0f), new Vector3(0.0f, 1.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f)),
 
-            new Triangle(new Vector3(0.0f, 1.0f, 0.0f), new Vector3(0.0f, 1.0f, 1.0f), new Vector3(1.0f, 1.0f, 1.0f)),
-            new Triangle(new Vector3(0.0f, 1.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(1.0f, 1.0f, 0.0f)),
+            //new Triangle(new Vector3(0.0f, 1.0f, 0.0f), new Vector3(0.0f, 1.0f, 1.0f), new Vector3(1.0f, 1.0f, 1.0f)),
+            //new Triangle(new Vector3(0.0f, 1.0f, 0.0f), new Vector3(1.0f, 1.0f, 1.0f), new Vector3(1.0f, 1.0f, 0.0f)),
 
-            new Triangle(new Vector3(1.0f, 0.0f, 1.0f), new Vector3(0.0f, 0.0f, 1.0f), new Vector3(0.0f, 0.0f, 0.0f)),
-            new Triangle(new Vector3(1.0f, 0.0f, 1.0f), new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 0.0f, 0.0f))
-             };
+            //new Triangle(new Vector3(1.0f, 0.0f, 1.0f), new Vector3(0.0f, 0.0f, 1.0f), new Vector3(0.0f, 0.0f, 0.0f)),
+            //new Triangle(new Vector3(1.0f, 0.0f, 1.0f), new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 0.0f, 0.0f))
+            // };
+
+            Loadfigure figure = new Loadfigure();
+            figure.readVerticies();
+            cube = figure.circle;
 
             float fNear = 0.1f;
             float fFar = 1000.0f;
@@ -108,6 +115,7 @@ namespace GrafikaProjekt2
         public void viewOnUpdate (TimeSpan elapsedTime)
         {
             bp = new Bitmap(pic.Width, pic.Height);
+            sipmleCamera = new Vector3();
             double timeTheta = elapsedTime.TotalMilliseconds / 1000;
 
             ftheta += 1.0f * (float)timeTheta;
@@ -151,31 +159,67 @@ namespace GrafikaProjekt2
                 triTranslated.v2.Z = triRotatedZX.v2.Z + 4.9f;
                 triTranslated.v3.Z = triRotatedZX.v3.Z + 4.9f;
 
-                //Multiply vector kazdego trojkonta
-                triProject.v1 = MultMatrixVect(triTranslated.v1, projMatrix);
-                triProject.v2 = MultMatrixVect(triTranslated.v2, projMatrix);
-                triProject.v3 = MultMatrixVect(triTranslated.v3, projMatrix);
+                //try to show cube without backside lines
+                Vector3 normal, line1, line2 = new Vector3();
 
-                //scale into view
-                triProject.v1.X += 1.0f; triProject.v1.Y += 1.0f;
-                triProject.v2.X += 1.0f; triProject.v2.Y += 1.0f;
-                triProject.v3.X += 1.0f; triProject.v3.Y += 1.0f;
+                line1.X = triTranslated.v2.X - triTranslated.v1.X;
+                line1.Y = triTranslated.v2.Y - triTranslated.v1.Y;
+                line1.Z = triTranslated.v2.Z - triTranslated.v1.Z;
 
-                triProject.v1.X *= 0.5f * bp.Width;
-                triProject.v1.Y *= 0.5f * bp.Height;
+                line2.X = triTranslated.v3.X - triTranslated.v1.X;
+                line2.Y = triTranslated.v3.Y - triTranslated.v1.Y;
+                line2.Z = triTranslated.v3.Z - triTranslated.v1.Z;
 
-                triProject.v2.X *= 0.5f * bp.Width;
-                triProject.v2.Y *= 0.5f * bp.Height;
+                normal.X = (line1.Y * line2.Z) - (line1.Z * line2.Y);
+                normal.Y = (line1.Z * line2.X) - (line1.X * line2.Z);
+                normal.Z = (line1.X * line2.Y) - (line1.Y * line2.X);
 
-                triProject.v3.X *= 0.5f * bp.Width;
-                triProject.v3.Y *= 0.5f * bp.Height;
+                float l = (float)Math.Sqrt(normal.X * normal.X + normal.Y * normal.Y + normal.Z * normal.Z);
+                normal.X /= l; normal.Y /= l; normal.Z /= l;
 
-                //here we spawn and fill our triangles
-                fillTriangle(triProject, bp);
-                DrawTriangle(triProject, bp);
+                float dotProduct = normal.X * (triTranslated.v1.X - sipmleCamera.X) +
+                                    normal.Y * (triTranslated.v1.Y - sipmleCamera.Y) +
+                                    normal.Z * (triTranslated.v1.Z - sipmleCamera.Z);
+
+                if (dotProduct < 0)
+                {
+
+                    Vector3 light = new Vector3(0.0f, 0.0f, -1.0f);
+                    float tmp = (float)Math.Sqrt(light.X * light.X + light.Y * light.Y + light.Z * light.Z);
+                    light.X /= tmp;
+                    light.Y /= tmp;
+                    light.Z /= tmp;
+
+                    
+                    float dp = normal.X * light.X + normal.Y * light.Y + normal.Z * light.Z;
 
 
-                
+
+                    //Multiply vector kazdego trojkonta
+                    triProject.v1 = MultMatrixVect(triTranslated.v1, projMatrix);
+                    triProject.v2 = MultMatrixVect(triTranslated.v2, projMatrix);
+                    triProject.v3 = MultMatrixVect(triTranslated.v3, projMatrix);
+
+                    //scale into view
+                    triProject.v1.X += 1.0f; triProject.v1.Y += 1.0f;
+                    triProject.v2.X += 1.0f; triProject.v2.Y += 1.0f;
+                    triProject.v3.X += 1.0f; triProject.v3.Y += 1.0f;
+
+                    triProject.v1.X *= 0.5f * bp.Width;
+                    triProject.v1.Y *= 0.5f * bp.Height;
+
+                    triProject.v2.X *= 0.5f * bp.Width;
+                    triProject.v2.Y *= 0.5f * bp.Height;
+
+                    triProject.v3.X *= 0.5f * bp.Width;
+                    triProject.v3.Y *= 0.5f * bp.Height;
+
+                    //here we spawn and fill our triangles
+                    fillTriangle(triProject, bp, dp);
+                    DrawTriangle(triProject, bp);
+
+                }
+
             }
 
             pic.Image = bp;
@@ -186,10 +230,10 @@ namespace GrafikaProjekt2
 
 
         //fill triangle
-        public static void fillTriangle(Triangle tri, Bitmap bitmap)
+        public static void fillTriangle(Triangle tri, Bitmap bitmap, float dotProduct)
         {
           
-            SolidBrush solidBrush = new SolidBrush(Color.FromArgb(160, 150,233));
+            SolidBrush solidBrush = new SolidBrush(Color.FromArgb((int)(160 * dotProduct), 150,233));
 
             Point point1 = new Point((int)tri.v1.X, (int)tri.v1.Y);
             Point point2 = new Point((int)tri.v2.X, (int)tri.v2.Y);
@@ -207,9 +251,9 @@ namespace GrafikaProjekt2
 
         //draw triangle
         public void DrawTriangle(Triangle tri, Bitmap bitmap) {
-            DrawFunctions.AlgorytmPrzyrostowy((int)tri.v1.X, (int)tri.v1.Y, (int)tri.v2.X, (int)tri.v2.Y, ref bitmap);
-            DrawFunctions.AlgorytmPrzyrostowy((int)tri.v2.X, (int)tri.v2.Y, (int)tri.v3.X, (int)tri.v3.Y, ref bitmap);
-            DrawFunctions.AlgorytmPrzyrostowy((int)tri.v3.X, (int)tri.v3.Y, (int)tri.v1.X, (int)tri.v1.Y, ref bitmap);
+            DrawFunctions.Brsenham((int)tri.v1.X, (int)tri.v1.Y, (int)tri.v2.X, (int)tri.v2.Y, ref bitmap);
+            DrawFunctions.Brsenham((int)tri.v2.X, (int)tri.v2.Y, (int)tri.v3.X, (int)tri.v3.Y, ref bitmap);
+            DrawFunctions.Brsenham((int)tri.v3.X, (int)tri.v3.Y, (int)tri.v1.X, (int)tri.v1.Y, ref bitmap);
         }
 
 
