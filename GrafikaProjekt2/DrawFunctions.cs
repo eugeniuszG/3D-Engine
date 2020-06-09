@@ -19,8 +19,6 @@ namespace GrafikaProjekt2
         public static void Brsenham(int x0, int y0, int x1, int y1, ref Bitmap bp) {
 
 
-            Console.WriteLine(y0);
-            Console.WriteLine(x0);
             var steep = Math.Abs(y1 - y0) > Math.Abs(x1 - x0);      // Отражаем линию по диагонали, если угол наклона слишком большой
             if (steep)
             {

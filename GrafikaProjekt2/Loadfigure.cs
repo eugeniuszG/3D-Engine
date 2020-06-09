@@ -12,8 +12,9 @@ namespace GrafikaProjekt2
 
     class Loadfigure
     {
+        
 
-        public List<_3Ddemo.Triangle> circle = new List<_3Ddemo.Triangle>();
+        public List<Triangle> circle = new List<Triangle>();
         List<Vector3> verticies = new List<Vector3>();
         List<int[]> indexOfVerticiesInTriangles = new List<int[]>();
 
@@ -59,7 +60,8 @@ namespace GrafikaProjekt2
                     int v2Index = singleTriangleIndex[1];
                     int v3Index = singleTriangleIndex[2];
 
-                    _3Ddemo.Triangle tr = new _3Ddemo.Triangle(verticies[v1Index], verticies[v2Index], verticies[v3Index]);
+                    Triangle tr = new Triangle(new Vector4( verticies[v1Index], 0f), new Vector4( verticies[v2Index],0f), new Vector4( verticies[v3Index],0f));
+                    //Triangle tr = new Triangle(verticies[v1Index], verticies[v2Index], verticies[v3Index]);
                     circle.Add(tr);
 
                 }
