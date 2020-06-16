@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Numerics;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Windows.Input;
+using System.Drawing.Drawing2D;
 
 
 
@@ -14,8 +16,9 @@ using System.Windows.Forms;
 namespace GrafikaProjekt2
 
 {
-    public class Triangle
+    public class Triangle : IComparable<Triangle>
     {
+        internal  float dp;
         public Vector4 v1;
         public Vector4 v2;
         public Vector4 v3;
@@ -28,6 +31,18 @@ namespace GrafikaProjekt2
             this.v3 = v3;
             List<Vector4> tri = new List<Vector4>() { this.v1, this.v2, this.v3 };
         }
+
+
+        public int CompareTo(Triangle other)
+        {
+            float first = (v1.Z + v2.Z + v3.Z) / 3.0f;
+            float second = (other.v1.Z + other.v2.Z + other.v3.Z) / 3.0f;
+
+            return second.CompareTo(first);
+
+            throw new NotImplementedException();
+        }
+
     }
 
     class _3Ddemo 
@@ -43,6 +58,11 @@ namespace GrafikaProjekt2
 
         public Vector4 sipmleCamera;
 
+        //unit vector
+        Vector4 lookDir;
+
+        float fYaw;
+
         //
         float helperDotProd;
 
@@ -52,31 +72,31 @@ namespace GrafikaProjekt2
 
             this.pic = pic;
 
-            //create verticies of cibe
+            Loadfigure figure = new Loadfigure();
+            figure.readVerticies();
+            cube = figure.circle;
 
-            cube = new List<Triangle>() {
-            new Triangle(new Vector4(0.0f, 0.0f, 0.0f,1), new Vector4(0.0f, 1.0f, 0.0f,1), new Vector4(1.0f, 1.0f, 0.0f,1)),
-            new Triangle(new Vector4(0.0f, 0.0f, 0.0f,1), new Vector4(1.0f, 1.0f, 0.0f,1), new Vector4(1.0f, 0.0f, 0.0f,1)),
+            //cube = new List<Triangle>() {
+            //new Triangle(new Vector4(0.0f, 0.0f, 0.0f,1), new Vector4(0.0f, 1.0f, 0.0f,1), new Vector4(1.0f, 1.0f, 0.0f,1)),
+            //new Triangle(new Vector4(0.0f, 0.0f, 0.0f,1), new Vector4(1.0f, 1.0f, 0.0f,1), new Vector4(1.0f, 0.0f, 0.0f,1)),
 
-            new Triangle(new Vector4(1.0f, 0.0f, 0.0f,1), new Vector4(1.0f, 1.0f, 0.0f,1), new Vector4(1.0f, 1.0f, 1.0f,1)),
-            new Triangle(new Vector4(1.0f, 0.0f, 0.0f,1), new Vector4(1.0f, 1.0f, 1.0f,1), new Vector4(1.0f, 0.0f, 1.0f,1)),
+            //new Triangle(new Vector4(1.0f, 0.0f, 0.0f,1), new Vector4(1.0f, 1.0f, 0.0f,1), new Vector4(1.0f, 1.0f, 1.0f,1)),
+            //new Triangle(new Vector4(1.0f, 0.0f, 0.0f,1), new Vector4(1.0f, 1.0f, 1.0f,1), new Vector4(1.0f, 0.0f, 1.0f,1)),
 
-            new Triangle(new Vector4(1.0f, 0.0f, 1.0f,1), new Vector4(1.0f, 1.0f, 1.0f,1), new Vector4(0.0f, 1.0f, 1.0f,1)),
-            new Triangle(new Vector4(1.0f, 0.0f, 1.0f,1), new Vector4(0.0f, 1.0f, 1.0f,1), new Vector4(0.0f, 0.0f, 1.0f,1)),
+            //new Triangle(new Vector4(1.0f, 0.0f, 1.0f,1), new Vector4(1.0f, 1.0f, 1.0f,1), new Vector4(0.0f, 1.0f, 1.0f,1)),
+            //new Triangle(new Vector4(1.0f, 0.0f, 1.0f,1), new Vector4(0.0f, 1.0f, 1.0f,1), new Vector4(0.0f, 0.0f, 1.0f,1)),
 
-            new Triangle(new Vector4(0.0f, 0.0f, 1.0f,1), new Vector4(0.0f, 1.0f, 1.0f,1), new Vector4(0.0f, 1.0f, 0.0f,1)),
-            new Triangle(new Vector4(0.0f, 0.0f, 1.0f,1), new Vector4(0.0f, 1.0f, 0.0f,1), new Vector4(0.0f, 0.0f, 0.0f,1)),
+            //new Triangle(new Vector4(0.0f, 0.0f, 1.0f,1), new Vector4(0.0f, 1.0f, 1.0f,1), new Vector4(0.0f, 1.0f, 0.0f,1)),
+            //new Triangle(new Vector4(0.0f, 0.0f, 1.0f,1), new Vector4(0.0f, 1.0f, 0.0f,1), new Vector4(0.0f, 0.0f, 0.0f,1)),
 
-            new Triangle(new Vector4(0.0f, 1.0f, 0.0f,1), new Vector4(0.0f, 1.0f, 1.0f,1), new Vector4(1.0f, 1.0f, 1.0f,1)),
-            new Triangle(new Vector4(0.0f, 1.0f, 0.0f,1), new Vector4(1.0f, 1.0f, 1.0f,1), new Vector4(1.0f, 1.0f, 0.0f,1)),
+            //new Triangle(new Vector4(0.0f, 1.0f, 0.0f,1), new Vector4(0.0f, 1.0f, 1.0f,1), new Vector4(1.0f, 1.0f, 1.0f,1)),
+            //new Triangle(new Vector4(0.0f, 1.0f, 0.0f,1), new Vector4(1.0f, 1.0f, 1.0f,1), new Vector4(1.0f, 1.0f, 0.0f,1)),
 
-            new Triangle(new Vector4(1.0f, 0.0f, 1.0f,1), new Vector4(0.0f, 0.0f, 1.0f,1), new Vector4(0.0f, 0.0f, 0.0f,1)),
-            new Triangle(new Vector4(1.0f, 0.0f, 1.0f,1), new Vector4(0.0f, 0.0f, 0.0f,1), new Vector4(1.0f, 0.0f, 0.0f,1))
-             };
+            //new Triangle(new Vector4(1.0f, 0.0f, 1.0f,1), new Vector4(0.0f, 0.0f, 1.0f,1), new Vector4(0.0f, 0.0f, 0.0f,1)),
+            //new Triangle(new Vector4(1.0f, 0.0f, 1.0f,1), new Vector4(0.0f, 0.0f, 0.0f,1), new Vector4(1.0f, 0.0f, 0.0f,1))
+            // };
 
-            //Loadfigure figure = new Loadfigure();
-            //figure.readVerticies();
-            //cube = figure.circle;
+
 
             float fNear = 0.1f;
             float fFar = 1000.0f;
@@ -91,13 +111,55 @@ namespace GrafikaProjekt2
 
         }
 
+
         public void viewOnUpdate(TimeSpan elapsedTime)
         {
             bp = new Bitmap(pic.Width, pic.Height);
-            sipmleCamera = new Vector4();
-            double timeTheta = elapsedTime.TotalMilliseconds / 1000;
+            double timeV = elapsedTime.TotalMilliseconds / 1000;
 
-            ftheta += 1.0f * (float)timeTheta;
+            ftheta += 1.0f * (float)timeV;
+
+            if ((Keyboard.GetKeyStates(Key.Up) & KeyStates.Down) > 0)
+            {
+                sipmleCamera.Y += 0.01f + (float)timeV;
+            }
+            if ((Keyboard.GetKeyStates(Key.Down) & KeyStates.Down) > 0)
+            {
+                sipmleCamera.Y -= 0.01f + (float)timeV;
+            }
+
+            if ((Keyboard.GetKeyStates(Key.Left) & KeyStates.Down) > 0)
+            {
+                sipmleCamera.X += 0.01f + (float)timeV;
+            }
+            if ((Keyboard.GetKeyStates(Key.Right) & KeyStates.Down) > 0)
+            {
+                sipmleCamera.X -= 0.01f + (float)timeV;
+            }
+
+            Vector4 vForaward = lookDir * (8.0f * (float)timeV);
+
+
+            if ((Keyboard.GetKeyStates(Key.W) & KeyStates.Down) > 0)
+            {
+                sipmleCamera = addVector(sipmleCamera, vForaward);
+            }
+            if ((Keyboard.GetKeyStates(Key.S) & KeyStates.Down) > 0)
+            {
+                sipmleCamera = subVector( sipmleCamera, vForaward);
+            }
+
+            if ((Keyboard.GetKeyStates(Key.A) & KeyStates.Down) > 0)
+            {
+                fYaw += 0.05f + (float)timeV;
+            }
+            if ((Keyboard.GetKeyStates(Key.D) & KeyStates.Down) > 0)
+            {
+                fYaw -= 0.05f + (float)timeV;
+            }
+
+
+
             //Rotation by z
             matRotZ = MatrixRotateZ(ftheta);
             //Rotation by x
@@ -105,22 +167,33 @@ namespace GrafikaProjekt2
             //тут все хорошо тоже
 
             Matrix4x4 matTrans;
-            matTrans = MatrixTranslation(0, 0, 3);
+            matTrans = MatrixTranslation(0, 0, 6);
 
             Matrix4x4 matWorld;
             matWorld = MatrixIdentity();
-            //matWorld = matRotZ * matRotX;
+            matWorld = matRotZ;
             matWorld = matWorld * matTrans;
 
 
-            List<Triangle> listTrianglesToRastr = new List<Triangle>();
+            Vector4 vUp = new Vector4(0, 1, 0, 1);
+            Vector4 vTarget = new Vector4(0,0,1,1);
+            Matrix4x4 matCameraR = MatrixRotateY(fYaw);
+            lookDir = MatrixMultVector(vTarget, matCameraR);
+            vTarget = addVector(sipmleCamera , lookDir);
 
+            Matrix4x4 matCamera = MatrixPointAt(sipmleCamera, vTarget, vUp);
+
+            Matrix4x4 matView = Matrix_QuickInverse(matCamera);
+
+
+            List<Triangle> listTrianglesToRastr = new List<Triangle>();
 
             foreach (Triangle tri in cube)
             {
                 //тут начинается херня
                 Triangle triProject = new Triangle(new Vector4(), new Vector4(), new Vector4());
                 Triangle triTransform = new Triangle(new Vector4(), new Vector4(), new Vector4());
+                Triangle triView = new Triangle(new Vector4(), new Vector4(), new Vector4());
                 //Triangle triTranslated = new Triangle(new Vector4(), new Vector4(), new Vector4());
                 //Triangle triRotatedZX = new Triangle(new Vector4(), new Vector4(), new Vector4());
                 //Triangle triRotatedZ = new Triangle(new Vector4(), new Vector4(), new Vector4());
@@ -130,74 +203,51 @@ namespace GrafikaProjekt2
                 triTransform.v2 = MatrixMultVector(tri.v2, matWorld);
                 triTransform.v3 = MatrixMultVector(tri.v3, matWorld);
 
-                //noramlize 
-                //triTransform.v1.
 
-                ////rotate in the z axis
-                //triRotatedZ.v1 = MatrixMultVector(tri.v1, matRotZ);
-                //triRotatedZ.v2 = MatrixMultVector(tri.v2, matRotZ);
-                //triRotatedZ.v3 = MatrixMultVector(tri.v3, matRotZ);
+                
 
-                ////rotate in the x axis
-                //triRotatedZX.v1 = MatrixMultVector(triRotatedZ.v1, matRotX);
-                //triRotatedZX.v2 = MatrixMultVector(triRotatedZ.v2, matRotX);
-                //triRotatedZX.v3 = MatrixMultVector(triRotatedZ.v3, matRotX);
-
-                //triTranslated = triRotatedZX;
-                //triTranslated.v1.Z = triRotatedZX.v1.Z + 3.0f;
-                //triTranslated.v2.Z = triRotatedZX.v2.Z + 3.0f;
-                //triTranslated.v3.Z = triRotatedZX.v3.Z + 3.0f;
 
                 //try to show cube without backside lines
                 Vector4 normal, line1, line2 = new Vector4();
-                line1 = triTransform.v2 - triTransform.v1;
-                line2 = triTransform.v3 - triTransform.v1;
+                line1 = subVector( triTransform.v2, triTransform.v1);
+                line2 = subVector(triTransform.v3, triTransform.v1);
 
                 normal = VectorCrossProd(line1, line2);
 
                 normal = VectorNormalise(normal);
 
 
-                //line1.X = triTransform.v2.X - triTransform.v1.X;
-                //line1.Y = triTransform.v2.Y - triTransform.v1.Y;
-                //line1.Z = triTransform.v2.Z - triTransform.v1.Z;
-
-                //line2.X = triTransform.v3.X - triTransform.v1.X;
-                //line2.Y = triTransform.v3.Y - triTransform.v1.Y;
-                //line2.Z = triTransform.v3.Z - triTransform.v1.Z;
-
-                //normal.X = (line1.Y * line2.Z) - (line1.Z * line2.Y);
-                //normal.Y = (line1.Z * line2.X) - (line1.X * line2.Z);
-                //normal.Z = (line1.X * line2.Y) - (line1.Y * line2.X);
-
-                //float l = (float)Math.Sqrt(normal.X * normal.X + normal.Y * normal.Y + normal.Z * normal.Z);
-                //normal.X /= l; normal.Y /= l; normal.Z /= l;
-
-                //float dotProduct = normal.X * (triTransform.v1.X - sipmleCamera.X) +
-                //                    normal.Y * (triTransform.v1.Y - sipmleCamera.Y) +
-                //                    normal.Z * (triTransform.v1.Z - sipmleCamera.Z);
-
-                Vector4 vcameraRay = triTransform.v1 - sipmleCamera;
+                Vector4 vcameraRay = subVector( triTransform.v1,  sipmleCamera);
 
                 if (VectordotProduct(normal, vcameraRay) < 0)
                 {
 
-                    Vector4 light = new Vector4(0.0f, 1.0f, -1.0f, 1.0f);
-                    //float tmp = (float)Math.Sqrt(light.X * light.X + light.Y * light.Y + light.Z * light.Z);
-                    //light.X /= tmp;
-                    //light.Y /= tmp;
-                    //light.Z /= tmp;
+                    Vector4 light = new Vector4(0.0f, -1.0f, -1.0f, 1.0f);
+                    //float length = (float)Math.Sqrt(light.X * light.X + light.Y * light.Y + light.Z * light.Z);
+                    //light.X /= length;
+                    //light.Y /= length;
+                    //light.Z /= length;
+
                     light = VectorNormalise(light);
 
+                    //// How similar is normal to light direction
+                    float dp = normal.X * light.X + normal.Y * light.Y + normal.Z * light.Z;
 
-                    float dp = Math.Max(0.1f, VectordotProduct(light, normal));
+                    Console.WriteLine(dp);
 
-                    helperDotProd = dp;
 
-                    //Multiply vector kazdego trojkonta
-                    triProject.v1 = MatrixMultVector(triTransform.v1, projMatrix);
-                    triProject.v2 = MatrixMultVector(triTransform.v2, projMatrix);
-                    triProject.v3 = MatrixMultVector(triTransform.v3, projMatrix);
+                    
+
+
+                    //World space into view
+                    triView.v1 = MatrixMultVector(triTransform.v1, matView);
+                    triView.v2 = MatrixMultVector(triTransform.v2, matView);
+                    triView.v3 = MatrixMultVector(triTransform.v3, matView);
+
+                    //project triangles 3d -2d
+                    triProject.v1 = MatrixMultVector(triView.v1, projMatrix);
+                    triProject.v2 = MatrixMultVector(triView.v2, projMatrix);
+                    triProject.v3 = MatrixMultVector(triView.v3, projMatrix);
 
                     //normalize
                     triProject.v1 = triProject.v1 / triProject.v1.W;
@@ -210,9 +260,6 @@ namespace GrafikaProjekt2
                     triProject.v2 = triProject.v2 + vOffset;
                     triProject.v3 = triProject.v3 + vOffset;
 
-                    //triProject.v1.X += 1.0f; triProject.v1.Y += 1.0f;
-                    //triProject.v2.X += 1.0f; triProject.v2.Y += 1.0f;
-                    //triProject.v3.X += 1.0f; triProject.v3.Y += 1.0f;
 
                     triProject.v1.X *= 0.5f * bp.Width;
                     triProject.v1.Y *= 0.5f * bp.Height;
@@ -223,32 +270,26 @@ namespace GrafikaProjekt2
                     triProject.v3.X *= 0.5f * bp.Width;
                     triProject.v3.Y *= 0.5f * bp.Height;
 
+                    triProject.dp = dp;
                     listTrianglesToRastr.Add(triProject);
 
                 }
 
             }
-
-
-
-
-
             //end of foreach loop
 
             //algorytm malarski, sortujemy według osi z
-            listTrianglesToRastr.Sort(delegate (Triangle t1, Triangle t2)
-            {
-                return (t1.v1.Z + t1.v2.Z + t1.v3.Z / 3.0f).CompareTo(t2.v1.Z + t2.v2.Z + t2.v3.Z / 3.0f);
-            });
-
-
+            listTrianglesToRastr.Sort();
 
 
             foreach (var triProject in listTrianglesToRastr)
             {
-                Console.WriteLine((triProject.v3.Z + triProject.v3.Z + triProject.v3.Z) / 3.0f);
-                fillTriangle(triProject, bp, helperDotProd);
-                DrawTriangle(triProject, bp);
+
+
+                fillTriangle(triProject, bp);
+                //DrawTriangle(triProject, bp);
+                
+                
             }
 
             pic.Image = bp;
@@ -259,48 +300,41 @@ namespace GrafikaProjekt2
 
 
 
-        //Matrix4x4 MatrixPointAt(Vector3 pos, Vector3 target, Vector3 up)
-        //{
-        //    Vector3 newForward = target - pos;
-        //    newForward = VectorNormalise(newForward);
-
-        //    Vector3 a = newForward * dotProduct(up, newForward);
-        //    Vector3 newUp = up - a;
-        //    newUp = VectorNormalise(newUp);
-
-        //    Vector3 newRight = VectorCrossProd(newUp, newForward);
-
-        //    Matrix4x4 matrix;
-
-        //    matrix.M11 = newRight.X;
-        //    matrix.M12 = newRight.Y;
-        //    matrix.M13 = newRight.Y;
-
-        //    matrix.m[0][0] = newRight.x; matrix.m[0][1] = newRight.y; matrix.m[0][2] = newRight.z; matrix.m[0][3] = 0.0f;
-        //    matrix.m[1][0] = newUp.x; matrix.m[1][1] = newUp.y; matrix.m[1][2] = newUp.z; matrix.m[1][3] = 0.0f;
-        //    matrix.m[2][0] = newForward.x; matrix.m[2][1] = newForward.y; matrix.m[2][2] = newForward.z; matrix.m[2][3] = 0.0f;
-        //    matrix.m[3][0] = pos.x; matrix.m[3][1] = pos.y; matrix.m[3][2] = pos.z; matrix.m[3][3] = 1.0f;
-        //    return matrix;
-        //}
-
-
-
-
-
 
         //helper functions
 
         //fill triangle
-        public void fillTriangle(Triangle tri, Bitmap bitmap, float dotProduct)
+        public void fillTriangle(Triangle tri, Bitmap bitmap)
         {
+            
+            float dp = tri.dp;
+            float R = dp * 255;
+            float G = dp * 255;
+            float B = dp * 255;
+            //Console.WriteLine(dp);
+            if (R < 0)
+            {
+                R = 0;
+            }
+            if (G < 0)
+            {
+                G = 0;
+            }
+            if (B < 0)
+            {
+                B = 0;
+            }
 
-            SolidBrush solidBrush = new SolidBrush(Color.FromArgb((int)(160 * dotProduct), 150, 233));
+
+
+            SolidBrush solidBrush = new SolidBrush(Color.FromArgb((int)R,(int)G, (int)B));
 
             Point point1 = new Point((int)tri.v1.X, (int)tri.v1.Y);
             Point point2 = new Point((int)tri.v2.X, (int)tri.v2.Y);
             Point point3 = new Point((int)tri.v3.X, (int)tri.v3.Y);
 
             Point[] curvePoints = { point1, point2, point3 };
+
 
 
             using (var graphics = Graphics.FromImage(bitmap))
@@ -311,16 +345,34 @@ namespace GrafikaProjekt2
         }
 
         //draw triangle
-        public void DrawTriangle(Triangle tri, Bitmap bitmap)
-        {
-            DrawFunctions.Brsenham((int)tri.v1.X, (int)tri.v1.Y, (int)tri.v2.X, (int)tri.v2.Y, ref bitmap);
-            DrawFunctions.Brsenham((int)tri.v2.X, (int)tri.v2.Y, (int)tri.v3.X, (int)tri.v3.Y, ref bitmap);
-            DrawFunctions.Brsenham((int)tri.v3.X, (int)tri.v3.Y, (int)tri.v1.X, (int)tri.v1.Y, ref bitmap);
-        }
+        //public void DrawTriangle(Triangle tri, Bitmap bitmap)
+        //{
+        //    DrawFunctions.Brsenham((int)tri.v1.X, (int)tri.v1.Y, (int)tri.v2.X, (int)tri.v2.Y, ref bitmap);
+        //    DrawFunctions.Brsenham((int)tri.v2.X, (int)tri.v2.Y, (int)tri.v3.X, (int)tri.v3.Y, ref bitmap);
+        //    DrawFunctions.Brsenham((int)tri.v3.X, (int)tri.v3.Y, (int)tri.v1.X, (int)tri.v1.Y, ref bitmap);
+        //}
 
 
         //helper functions 
-                     
+
+
+        public Vector4 addVector(Vector4 v1, Vector4 v2)
+        {
+            Vector4 v = new Vector4();
+            v.X = v1.X + v2.X;
+            v.Y = v1.Y + v2.Y;
+            v.Z = v1.Z + v2.Z;
+            return v;
+        }
+
+        public Vector4 subVector(Vector4 v1, Vector4 v2)
+        {
+            Vector4 v = new Vector4();
+            v.X = v1.X - v2.X;
+            v.Y = v1.Y - v2.Y;
+            v.Z = v1.Z - v2.Z;
+            return v;
+        }
 
         public float VectordotProduct(Vector4 v1, Vector4 v2)
         {
@@ -434,6 +486,64 @@ namespace GrafikaProjekt2
 
              return v2;
 
+        }
+
+        Matrix4x4 MatrixPointAt(Vector4 pos, Vector4 target, Vector4 up)
+        {
+            Vector4 newForward = target - pos;
+            newForward = VectorNormalise(newForward);
+
+            Vector4 a = newForward * VectordotProduct(up, newForward);
+            Vector4 newUp = up - a;
+            newUp = VectorNormalise(newUp);
+
+            Vector4 newRight = VectorCrossProd(newUp, newForward);
+
+            Matrix4x4 matrix;
+
+            matrix.M11 = newRight.X;
+            matrix.M12 = newRight.Y;
+            matrix.M13 = newRight.Y;
+
+            matrix.M11 = newRight.X;
+            matrix.M12 = newRight.Y;
+            matrix.M13 = newRight.Z;
+            matrix.M14 = 0.0f;
+            matrix.M21 = newUp.X;
+            matrix.M22 = newUp.Y;
+            matrix.M23 = newUp.Z;
+            matrix.M24 = 0.0f;
+            matrix.M31 = newForward.X;
+            matrix.M32 = newForward.Y;
+            matrix.M33 = newForward.Z;
+            matrix.M34 = 0.0f;
+            matrix.M41 = pos.X;
+            matrix.M42 = pos.Y;
+            matrix.M43 = pos.Z;
+            matrix.M44 = 1.0f;
+            return matrix;
+        }
+
+        Matrix4x4 Matrix_QuickInverse(Matrix4x4 m) // Only for Rotation/Translation Matrices
+        {
+            Matrix4x4 matrix = new Matrix4x4();
+            matrix.M11 = m.M11;
+            matrix.M12 = m.M21;
+            matrix.M13 = m.M31;
+            matrix.M14 = 0.0f;
+            matrix.M21 = m.M12;
+            matrix.M22 = m.M22;
+            matrix.M23 = m.M32;
+            matrix.M24 = 0.0f;
+            matrix.M31 = m.M13;
+            matrix.M32 = m.M23;
+            matrix.M33 = m.M33;
+            matrix.M34 = 0.0f;
+            matrix.M41 = -(m.M41 * matrix.M11 + m.M42 * matrix.M21 + m.M43 * matrix.M31);
+            matrix.M42 = -(m.M41 * matrix.M12 + m.M42 * matrix.M22 + m.M43 * matrix.M32);
+            matrix.M43 = -(m.M41 * matrix.M13 + m.M42 * matrix.M23 + m.M43 * matrix.M33);
+            matrix.M44 = 1.0f;
+            return matrix;
         }
 
     }

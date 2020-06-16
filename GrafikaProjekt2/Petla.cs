@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace GrafikaProjekt2
 {
@@ -29,6 +30,8 @@ namespace GrafikaProjekt2
                 await Task.Delay(8);
             }
         }
+
+
         public void Stop()
         {
             Running = false;

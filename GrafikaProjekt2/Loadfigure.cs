@@ -18,7 +18,7 @@ namespace GrafikaProjekt2
         List<Vector3> verticies = new List<Vector3>();
         List<int[]> indexOfVerticiesInTriangles = new List<int[]>();
 
-        public string path = @"C:\Users\Eugene\Desktop\sphere.txt";
+        public string path = @"C:\Users\Eugene\Desktop\figures.obj";
 
         public void readVerticies()
         {
